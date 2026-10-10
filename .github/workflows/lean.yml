@@ -1,0 +1,77 @@
+name: lean
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  merge_group:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: Tools from apt
+        run: sudo apt-get update -q && sudo apt-get install -y -q libzstd-dev libsqlite3-dev
+      - name: Lean
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: lake build (age)
+        working-directory: age
+        run: |
+          lake build SqlarCasAge
+      - name: lake build (bao)
+        working-directory: bao
+        run: |
+          lake build SqlarCasBao
+      - name: lake build (bytes)
+        working-directory: bytes
+        run: |
+          lake build SqlarCasBytes
+      - name: lake build (chunker)
+        working-directory: chunker
+        run: |
+          lake build SqlarCasChunker
+      - name: lake build (comparison)
+        working-directory: comparison
+        run: |
+          lake build Comparison
+      - name: lake build (crypto)
+        working-directory: crypto
+        run: |
+          lake build SqlarCasCrypto
+      - name: lake build (desync)
+        working-directory: desync
+        run: |
+          lake build SqlarCasDesync
+      - name: lake build (envelope)
+        working-directory: envelope
+        run: |
+          lake build SqlarCasEnvelope
+      - name: lake build (hash)
+        working-directory: hash
+        run: |
+          lake build SqlarCasHash
+      - name: lake build (index)
+        working-directory: index
+        run: |
+          lake build SqlarCasIndex
+      - name: lake build (.)
+        working-directory: .
+        run: |
+          lake build Theorems SqlarCas
+      - name: lake build (sqlar)
+        working-directory: sqlar
+        run: |
+          lake build SqlarCasSqlar
+      - name: lake build (wraps)
+        working-directory: wraps
+        run: |
+          lake build SqlarCasWraps
+      - name: lake build (zstd)
+        working-directory: zstd
+        run: |
+          lake build SqlarCasZstd
